@@ -65,6 +65,7 @@ namespace WorkrsBackend.DataHandling
                 CREATE TABLE IF NOT EXISTS clientdht(
                     userId TEXT PRIMARY KEY NOT NULL,
                     username TEXT NOT NULL,
+                    password TEXT NOT NULL,
                     servername TEXT NOT NULL,
                     dataserver TEXT NOT NULL
                 );
@@ -161,12 +162,13 @@ namespace WorkrsBackend.DataHandling
             var command = sharedDatabase.CreateCommand();
             command.CommandText =
             @"
-                    INSERT INTO clientdht (userId, username, servername, dataserver)
-                    VALUES ($clientId, $username, $servername, $dataserver);
+                    INSERT INTO clientdht (userId, username, password, servername, dataserver)
+                    VALUES ($clientId, $username, $password, $servername, $dataserver);
                 ";
 
             command.Parameters.AddWithValue("$clientId", client.ClientId);
             command.Parameters.AddWithValue("$username", client.Username);
+            command.Parameters.AddWithValue("$password", client.Password);
             command.Parameters.AddWithValue("$servername", client.ServerName);
             command.Parameters.AddWithValue("$dataserver", client.DataServer);
 

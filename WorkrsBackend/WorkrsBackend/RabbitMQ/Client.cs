@@ -9,6 +9,7 @@ namespace WorkrsBackend.RabbitMQ
     {
         public Guid ClientId { get; }
         public string Username { get; set; }
+        public string Password { get; set; }
         public string ServerName { get; set; }
         public string DataServer { get; }
 
