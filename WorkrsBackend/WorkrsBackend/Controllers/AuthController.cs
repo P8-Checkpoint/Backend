@@ -41,11 +41,10 @@ namespace WorkrsBackend.Controllers
                     {
                         Subject = new ClaimsIdentity(new[]
                         {
-                new Claim("Id", Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Email, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Jti,
-                Guid.NewGuid().ToString())
+                            new Claim("Id", Guid.NewGuid().ToString()),
+                            new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
+                            new Claim(JwtRegisteredClaimNames.Jti,
+                            Guid.NewGuid().ToString())
                          }),
                         Expires = DateTime.UtcNow.AddDays(365),
                         Issuer = issuer,
@@ -56,7 +55,7 @@ namespace WorkrsBackend.Controllers
                     };
                     var tokenHandler = new JwtSecurityTokenHandler();
                     var token = tokenHandler.CreateToken(tokenDescriptor);
-                    var jwtToken = tokenHandler.WriteToken(token);
+                    //var jwtToken = tokenHandler.WriteToken(token);
                     var stringToken = tokenHandler.WriteToken(token);
                     return Results.Ok(stringToken);
                 }

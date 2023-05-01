@@ -46,6 +46,7 @@ namespace WorkrsBackend
 
             builder.Services.AddAuthorization();
             builder.Services.AddControllers();
+            builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             builder.Services.AddSingleton<IServerConfig, ServerConfig>();
             builder.Services.AddSingleton<IDataAccessHandler, DataAccessHandler>();
             builder.Services.AddSingleton<ISharedResourceHandler, SharedResourceHandler>();

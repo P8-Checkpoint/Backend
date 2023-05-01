@@ -12,9 +12,11 @@ namespace WorkrsBackend.Controllers
     public class ClientController : ControllerBase
     {
         ISharedResourceHandler _sharedResourceHandler;
-        public ClientController(ISharedResourceHandler sharedResourceHandler)
+        IHttpContextAccessor _httpContextAccessor;
+        public ClientController(/*ISharedResourceHandler sharedResourceHandler,*/ IHttpContextAccessor httpContextAccessor)
         {
-            _sharedResourceHandler = sharedResourceHandler;
+            //_sharedResourceHandler = sharedResourceHandler;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpPost]
@@ -24,5 +26,19 @@ namespace WorkrsBackend.Controllers
             _sharedResourceHandler.AddClientToClientDHT(client);
             return Ok();
         }
+
+        [HttpGet]
+        public ActionResult GetClient(string clientName) 
+        {
+            var username = _httpContextAccessor.HttpContext.User.Identity.Name;
+            ClientDTO c  =_sharedResourceHandler.FindClientByUserName(clientName);
+            if(c != null)
+            {
+                return Ok(c);
+            }
+
+            return NotFound();
+        }
+
     }
 }
