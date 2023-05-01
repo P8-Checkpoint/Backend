@@ -14,11 +14,11 @@ namespace WorkrsBackend.Controllers
     [Route("api/[controller]/[Action]")]
     [ApiController]
     [Authorize]
-    public class Auth : ControllerBase
+    public class AuthController : ControllerBase
     {
         IConfiguration _configuration;
         ISharedResourceHandler _shardedDataHandler;
-        public Auth(IConfiguration config, ISharedResourceHandler DataHandler)
+        public AuthController(IConfiguration config, ISharedResourceHandler DataHandler)
         {
             _configuration = config;
             _shardedDataHandler = DataHandler;
@@ -26,9 +26,9 @@ namespace WorkrsBackend.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public IResult CreateToken(User user)
+        public IResult CreateToken(ClientLoginDTO user)
         {
-            Client c = _shardedDataHandler.FindClientByUserName(user.UserName);
+            ClientDTO c = _shardedDataHandler.FindClientByUserName(user.UserName);
             if (c != null)
             {
                 if (user.Password == c.Password)

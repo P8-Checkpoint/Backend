@@ -5,14 +5,14 @@ namespace WorkrsBackend.DataHandling
 {
     public interface ISharedResourceHandler
     {
-        public void AddClientToClientDHT(Client client);
-        public void CreateClient(Client client);
+        public void AddClientToClientDHT(ClientDTO client);
+        public void CreateClient(ClientDTO client);
         public bool ClientExists(Guid clientId);
-        public Client? GetClientById(Guid clientId);
+        public ClientDTO? GetClientById(Guid clientId);
         public bool WorkerExists(Guid clientId);
         public Worker? GetWorkerById(Guid clientId);
-        public Client? FindClientByUserName(string username);
-        public void UpdateClientDHT(Client client);
+        public ClientDTO? FindClientByUserName(string username);
+        public void UpdateClientDHT(ClientDTO client);
         public void UpdateWorkerDHT(Worker worker);
         public Worker? GetAvailableWorker();
         public List<Worker> GetMyWorkers();

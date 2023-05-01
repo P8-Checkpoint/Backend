@@ -94,9 +94,9 @@ namespace WorkrsBackend.DataHandling
             command.ExecuteNonQuery();
         }
 
-        public Client? FindClientByUserName(string username)
+        public ClientDTO? FindClientByUserName(string username)
         {
-            Client? retval = null;
+            ClientDTO? retval = null;
 
             var command = sharedDatabase.CreateCommand();
             command.CommandText =
@@ -111,16 +111,16 @@ namespace WorkrsBackend.DataHandling
             {
                 if(reader.Read())
                 {
-                    retval = new Client(reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetString(3));
+                    retval = new ClientDTO(reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetString(3));
                 }
             }
 
             return retval;
         }
 
-        public Dictionary<Guid, Client> GetClientDHT()
+        public Dictionary<Guid, ClientDTO> GetClientDHT()
         {
-            Dictionary<Guid, Client> retval = new();
+            Dictionary<Guid, ClientDTO> retval = new();
 
             var command = sharedDatabase.CreateCommand();
             command.CommandText =
@@ -132,14 +132,14 @@ namespace WorkrsBackend.DataHandling
             {
                 while (reader.Read())
                 {
-                    retval.Add(reader.GetGuid(0), new Client(reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetString(3)));
+                    retval.Add(reader.GetGuid(0), new ClientDTO(reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetString(3)));
                 }
             }
 
             return retval;
         }
 
-        public void UpdateClientDHT(Client client)
+        public void UpdateClientDHT(ClientDTO client)
         {
             var command = sharedDatabase.CreateCommand();
             command.CommandText =
@@ -157,7 +157,7 @@ namespace WorkrsBackend.DataHandling
             command.ExecuteNonQuery();
         }
 
-        public void AddClientToClientDHT(Client client)
+        public void AddClientToClientDHT(ClientDTO client)
         {
             var command = sharedDatabase.CreateCommand();
             command.CommandText =

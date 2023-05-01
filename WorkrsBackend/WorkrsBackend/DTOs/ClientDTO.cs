@@ -5,7 +5,7 @@ using System.Text;
 
 namespace WorkrsBackend.DTOs
 {
-    public class Client
+    public class ClientDTO
     {
         public Guid ClientId { get; }
         public string Username { get; set; }
@@ -13,7 +13,7 @@ namespace WorkrsBackend.DTOs
         public string ServerName { get; set; }
         public string DataServer { get; }
 
-        public Client(Guid clientId, string username, string serverName, string dataServer)
+        public ClientDTO(Guid clientId, string username, string serverName, string dataServer)
         {
             ClientId = clientId;
             Username = username;
