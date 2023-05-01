@@ -1,15 +1,16 @@
-﻿using WorkrsBackend.RabbitMQ;
+﻿using WorkrsBackend.DTOs;
+using WorkrsBackend.RabbitMQ;
 
 namespace WorkrsBackend.DataHandling
 {
     public interface IDataAccessHandler
     {
-        public void AddClientToClientDHT(Client client);
+        public void AddClientToClientDHT(ClientDTO client);
         //public Guid CreateClient(string username);
-        public Client? FindClientByUserName(string username);
+        public ClientDTO? FindClientByUserName(string username);
         public void DeleteClientFromClientDHT(Guid id);
-        public Dictionary<Guid, Client> GetClientDHT();
-        public void UpdateClientDHT(Client client);
+        public Dictionary<Guid, ClientDTO> GetClientDHT();
+        public void UpdateClientDHT(ClientDTO client);
         public void UpdateWorkerDHT(Worker worker);
         public Dictionary<string, Server> GetPrimaryServers();
         public Server? GetServerInfo(string serverName);

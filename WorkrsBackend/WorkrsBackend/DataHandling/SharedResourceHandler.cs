@@ -16,7 +16,7 @@ namespace WorkrsBackend.DataHandling
         bool _lockClient = false;
         bool _lockWorker = false;
         bool _lockServer = false;
-        public Dictionary<Guid, Client> _clientsDHT = new();
+        public Dictionary<Guid, ClientDTO> _clientsDHT = new();
         public Dictionary<Guid, Worker> _workersDHT = new();
         public Dictionary<string, Server> _serverDHT = new();
         private ReaderWriterLockSlim _lockClientDHT = new ReaderWriterLockSlim();
@@ -147,7 +147,7 @@ namespace WorkrsBackend.DataHandling
 
         void HandleClientChange(string s)
         {
-            Client? obj = JsonSerializer.Deserialize<Client?>(s);
+            ClientDTO? obj = JsonSerializer.Deserialize<ClientDTO?>(s);
             if(obj != null)
             {
                 if (_clientsDHT.ContainsKey(obj.ClientId))
@@ -316,17 +316,17 @@ namespace WorkrsBackend.DataHandling
             }
         }
 
-        public void AddClientToClientDHT(Client client)
+        public void AddClientToClientDHT(ClientDTO client)
         {
             MakeChange(client, ChangeType.Client);
         }
 
-        public void CreateClient(Client client)
+        public void CreateClient(ClientDTO client)
         {
             MakeChange(client, ChangeType.Client);
         }
 
-        public Client? FindClientByUserName(string username)
+        public ClientDTO? FindClientByUserName(string username)
         {
             while (_lockClient) ;
             _lockClientDHT.EnterReadLock();
@@ -338,7 +338,7 @@ namespace WorkrsBackend.DataHandling
             
         }
 
-        public void UpdateClientDHT(Client client)
+        public void UpdateClientDHT(ClientDTO client)
         {
             MakeChange(client, ChangeType.Client);
         }
@@ -408,9 +408,9 @@ namespace WorkrsBackend.DataHandling
             }
         }
 
-        public Client? GetClientById(Guid clientId)
+        public ClientDTO? GetClientById(Guid clientId)
         {
-            Client? client = null;
+            ClientDTO? client = null;
             while (_lockClient) Thread.Sleep(20);
             _lockClientDHT.EnterReadLock();
             try

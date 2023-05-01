@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WorkrsBackend.DataHandling;
+using WorkrsBackend.DTOs;
 using WorkrsBackend.RabbitMQ;
 
 namespace BackendTestProject
@@ -34,7 +35,7 @@ namespace BackendTestProject
         [Fact]
         public void CreateNewClient_ClientKnown_ExpectClientFound()
         {
-            Client expected = new Client(Guid.NewGuid(), "Morgan Freeman", "myServer", "myDatServer");
+            ClientDTO expected = new ClientDTO(Guid.NewGuid(), "Morgan Freeman", "myServer", "myDatServer");
 
             _sut.AddClientToClientDHT(expected);
             var actual = _sut.FindClientByUserName(expected.Username);
@@ -50,7 +51,7 @@ namespace BackendTestProject
         public void UpdateClient_ClientKnown_ExpectClientFound()
         {
 
-            Client expected = new Client(Guid.NewGuid(), "Taylor swift", "myServer", "myDatServer");
+            ClientDTO expected = new ClientDTO(Guid.NewGuid(), "Taylor swift", "myServer", "myDatServer");
             _sut.AddClientToClientDHT(expected);
             var actual = _sut.FindClientByUserName(expected.Username);
 
@@ -68,7 +69,7 @@ namespace BackendTestProject
         {
 
             var clientID = Guid.NewGuid();
-            Client client = new Client(clientID, "test", "myServer", "myDatServer");
+            ClientDTO client = new ClientDTO(clientID, "test", "myServer", "myDatServer");
             ServiceTask task = new ServiceTask(Guid.NewGuid(),
                                                 clientID,
                                                 "testjob",

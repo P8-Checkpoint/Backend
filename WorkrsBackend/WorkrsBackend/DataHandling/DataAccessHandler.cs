@@ -2,8 +2,8 @@
 using Microsoft.Data.Sqlite;
 using System.Data;
 using System.Runtime.ConstrainedExecution;
+using WorkrsBackend.DTOs;
 using WorkrsBackend.RabbitMQ;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace WorkrsBackend.DataHandling
 {

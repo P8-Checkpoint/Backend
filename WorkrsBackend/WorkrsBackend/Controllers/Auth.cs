@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using WorkrsBackend.DataHandling;
 using WorkrsBackend.DTOs;
 
 namespace WorkrsBackend.Controllers
@@ -16,43 +17,49 @@ namespace WorkrsBackend.Controllers
     public class Auth : ControllerBase
     {
         IConfiguration _configuration;
-        public Auth(IConfiguration config)
+        ISharedResourceHandler _shardedDataHandler;
+        public Auth(IConfiguration config, ISharedResourceHandler DataHandler)
         {
             _configuration = config;
+            _shardedDataHandler = DataHandler;
         }
 
         [HttpPost]
         [AllowAnonymous]
         public IResult CreateToken(User user)
         {
-            if (user.UserName == "joydip" && user.Password == "joydip123")
+            Client c = _shardedDataHandler.FindClientByUserName(user.UserName);
+            if (c != null)
             {
-                var issuer = _configuration["Jwt:Issuer"];
-                var audience = _configuration["Jwt:Audience"];
-                var key = Encoding.ASCII.GetBytes
-                (_configuration["Jwt:Key"]);
-                var tokenDescriptor = new SecurityTokenDescriptor
+                if (user.Password == c.Password)
                 {
-                    Subject = new ClaimsIdentity(new[]
+                    var issuer = _configuration["Jwt:Issuer"];
+                    var audience = _configuration["Jwt:Audience"];
+                    var key = Encoding.ASCII.GetBytes
+                    (_configuration["Jwt:Key"]);
+                    var tokenDescriptor = new SecurityTokenDescriptor
                     {
+                        Subject = new ClaimsIdentity(new[]
+                        {
                 new Claim("Id", Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Email, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti,
                 Guid.NewGuid().ToString())
                          }),
-                    Expires = DateTime.UtcNow.AddDays(365),
-                    Issuer = issuer,
-                    Audience = audience,
-                    SigningCredentials = new SigningCredentials
-                    (new SymmetricSecurityKey(key),
-                    SecurityAlgorithms.HmacSha512Signature)
-                };
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-                var jwtToken = tokenHandler.WriteToken(token);
-                var stringToken = tokenHandler.WriteToken(token);
-                return Results.Ok(stringToken);
+                        Expires = DateTime.UtcNow.AddDays(365),
+                        Issuer = issuer,
+                        Audience = audience,
+                        SigningCredentials = new SigningCredentials
+                        (new SymmetricSecurityKey(key),
+                        SecurityAlgorithms.HmacSha512Signature)
+                    };
+                    var tokenHandler = new JwtSecurityTokenHandler();
+                    var token = tokenHandler.CreateToken(tokenDescriptor);
+                    var jwtToken = tokenHandler.WriteToken(token);
+                    var stringToken = tokenHandler.WriteToken(token);
+                    return Results.Ok(stringToken);
+                }
             }
             return Results.Unauthorized();
         }

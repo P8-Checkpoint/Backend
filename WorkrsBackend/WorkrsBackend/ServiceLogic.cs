@@ -65,10 +65,10 @@ namespace WorkrsBackend
                 _rabbitMQHandler.CreateWorkerRegisterConsumer(WorkerRegistrationReceived);
                 _rabbitMQHandler.CreateWorkerConnectConsumer(WorkerConnectionReceived);
                 _ftpHandler.Init("192.168.1.10", "p1user", "p1user");
-                Client? c = _dataAccessHandler.FindClientByUserName("test");
+                ClientDTO? c = _dataAccessHandler.FindClientByUserName("test");
                 if (c == null)
                 {
-                    _dataAccessHandler.AddClientToClientDHT(new Client(Guid.NewGuid(), "test", "P1", "P1"));
+                    _dataAccessHandler.AddClientToClientDHT(new ClientDTO(Guid.NewGuid(), "test", "P1", "P1"));
                 }
             }
         }
@@ -79,7 +79,7 @@ namespace WorkrsBackend
             _rabbitMQHandler.Update();
             if(test)
             {
-                Client? c =_dataAccessHandler.FindClientByUserName("test");
+                ClientDTO? c =_dataAccessHandler.FindClientByUserName("test");
                 if(c != null)
                 {
                     ServiceTask st = new ServiceTask(Guid.NewGuid(), c.ClientId, "myTestTask", ServiceTaskStatus.Created, "p1.source", "p1.backup", "p1.result" );
@@ -279,7 +279,7 @@ namespace WorkrsBackend
 
         void AddClient(Guid clientId)
         {
-            Client? c = _dataAccessHandler.GetClientById(clientId);
+            ClientDTO? c = _dataAccessHandler.GetClientById(clientId);
             if (c == null) return;
             c.ServerName = c.DataServer;
             _dataAccessHandler.UpdateClientDHT(c);
@@ -291,7 +291,7 @@ namespace WorkrsBackend
             Task.Run(() => {
                 try
                 {
-                    Client? c = _dataAccessHandler.GetClientById(Guid.Parse(ea.ConsumerTag));
+                    ClientDTO? c = _dataAccessHandler.GetClientById(Guid.Parse(ea.ConsumerTag));
                     if (c != null)
                     {
                         if(ea.BasicProperties.Headers != null)

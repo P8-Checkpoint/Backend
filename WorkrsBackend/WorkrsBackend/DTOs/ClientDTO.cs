@@ -3,7 +3,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 
-namespace WorkrsBackend.RabbitMQ
+namespace WorkrsBackend.DTOs
 {
     public class Client
     {

@@ -1,4 +1,5 @@
-﻿using WorkrsBackend.RabbitMQ;
+﻿using WorkrsBackend.DTOs;
+using WorkrsBackend.RabbitMQ;
 
 namespace WorkrsBackend.DataHandling
 {
