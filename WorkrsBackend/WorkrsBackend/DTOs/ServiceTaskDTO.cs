@@ -1,4 +1,4 @@
-﻿namespace WorkrsBackend.RabbitMQ
+﻿namespace WorkrsBackend.DTOs
 {
     public enum ServiceTaskStatus
     {
@@ -11,7 +11,7 @@
         Completed
     }
 
-    public class ServiceTask
+    public class ServiceTaskDTO
     {
         public Guid Id { get; set; }
         public Guid ClientId { get; set; }
@@ -21,7 +21,7 @@
         public string BackupPath { get; set; }
         public string ResultPath { get; set; }
 
-        public ServiceTask(Guid id, Guid clientId, string name, ServiceTaskStatus status, string sourcePath, string backupPath, string resultPath)
+        public ServiceTaskDTO(Guid id, Guid clientId, string name, ServiceTaskStatus status, string sourcePath, string backupPath, string resultPath)
         {
             Id = id;
             ClientId = clientId;
@@ -31,7 +31,7 @@
             BackupPath = backupPath;
             ResultPath = resultPath;
         }
-        public ServiceTask(Guid id, Guid clientId, string name, ServiceTaskStatus status)
+        public ServiceTaskDTO(Guid id, Guid clientId, string name, ServiceTaskStatus status)
         {
             Id = id;
             ClientId = clientId;

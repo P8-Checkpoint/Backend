@@ -19,10 +19,10 @@ namespace WorkrsBackend.DataHandling
         public Dictionary<string, Server> GetPrimaryServers();
         public Server? GetServerInfo(string serverName);
         public void AddWorkerToWorkerDHT(Worker worker);
-        public void AddTask(ServiceTask task);
-        public void UpdateTask(ServiceTask task);
-        public ServiceTask? GetTaskFromId(Guid id);
-        public List<ServiceTask> GetTaskForClient(Guid clientId);
-        public List<ServiceTask> GetTasksFromStatus(ServiceTaskStatus status);
+        public void AddTask(ServiceTaskDTO task);
+        public void UpdateTask(ServiceTaskDTO task);
+        public ServiceTaskDTO? GetTaskFromId(Guid id);
+        public List<ServiceTaskDTO> GetTaskForClient(Guid clientId);
+        public List<ServiceTaskDTO> GetTasksFromStatus(ServiceTaskStatus status);
     }
 }

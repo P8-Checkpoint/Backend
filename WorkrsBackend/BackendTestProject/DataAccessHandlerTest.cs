@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using WorkrsBackend.DataHandling;
 using WorkrsBackend.DTOs;
-using WorkrsBackend.RabbitMQ;
 
 namespace BackendTestProject
 {
@@ -70,7 +69,7 @@ namespace BackendTestProject
 
             var clientID = Guid.NewGuid();
             ClientDTO client = new ClientDTO(clientID, "test", "myServer", "myDatServer");
-            ServiceTask task = new ServiceTask(Guid.NewGuid(),
+            ServiceTaskDTO task = new ServiceTaskDTO(Guid.NewGuid(),
                                                 clientID,
                                                 "testjob",
                                                 ServiceTaskStatus.Completed,
@@ -88,7 +87,7 @@ namespace BackendTestProject
         {
             var clientID = Guid.NewGuid();
 
-            ServiceTask taskCompleted = new ServiceTask(Guid.NewGuid(),
+            ServiceTaskDTO taskCompleted = new ServiceTaskDTO(Guid.NewGuid(),
                                                 clientID,
                                                 "testjob",
                                                 ServiceTaskStatus.Completed,
@@ -113,7 +112,7 @@ namespace BackendTestProject
         {
             var clientID = Guid.NewGuid();
 
-            ServiceTask taskFailed = new ServiceTask(Guid.NewGuid(),
+            ServiceTaskDTO taskFailed = new ServiceTaskDTO(Guid.NewGuid(),
                                                 clientID,
                                                 "testjob",
                                                 ServiceTaskStatus.Failed,
@@ -136,7 +135,7 @@ namespace BackendTestProject
         {
             var clientID = Guid.NewGuid();
 
-            ServiceTask taskCancel = new ServiceTask(Guid.NewGuid(),
+            ServiceTaskDTO taskCancel = new ServiceTaskDTO(Guid.NewGuid(),
                                                 clientID,
                                                 "testJobCancel",
                                                 ServiceTaskStatus.Cancel,
@@ -160,7 +159,7 @@ namespace BackendTestProject
         {
             var clientID = Guid.NewGuid();
 
-            ServiceTask taskStarting = new ServiceTask(Guid.NewGuid(),
+            ServiceTaskDTO taskStarting = new ServiceTaskDTO(Guid.NewGuid(),
                                                 clientID,
                                                 "testjob",
                                                 ServiceTaskStatus.Starting,
@@ -208,7 +207,7 @@ namespace BackendTestProject
         {
             var clientID = Guid.NewGuid();
 
-            ServiceTask taskUpdateTest = new ServiceTask(Guid.NewGuid(),
+            ServiceTaskDTO taskUpdateTest = new ServiceTaskDTO(Guid.NewGuid(),
                                                 clientID,
                                                 "testjobOld",
                                                 ServiceTaskStatus.Starting,

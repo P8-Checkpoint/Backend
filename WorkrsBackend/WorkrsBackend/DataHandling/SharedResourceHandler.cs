@@ -456,22 +456,22 @@ namespace WorkrsBackend.DataHandling
             return worker;
         }
 
-        public void AddTask(ServiceTask task)
+        public void AddTask(ServiceTaskDTO task)
         {
             _dataAccessHandler.AddTask(task);
         }
 
-        public void UpdateTask(ServiceTask task)
+        public void UpdateTask(ServiceTaskDTO task)
         {
             _dataAccessHandler.UpdateTask(task);
         }
 
-        public ServiceTask? GetTaskFromId(Guid taskId)
+        public ServiceTaskDTO? GetTaskFromId(Guid taskId)
         {
             return _dataAccessHandler.GetTaskFromId(taskId);
         }
 
-        public List<ServiceTask> GetTaskForClient(Guid clientId)
+        public List<ServiceTaskDTO> GetTaskForClient(Guid clientId)
         {
             return _dataAccessHandler.GetTaskForClient(clientId);
         }
@@ -495,7 +495,7 @@ namespace WorkrsBackend.DataHandling
             finally { _lockWorkerDHT.ExitReadLock();}
         }
 
-        public List<ServiceTask> GetTasksFromStatus(ServiceTaskStatus status)
+        public List<ServiceTaskDTO> GetTasksFromStatus(ServiceTaskStatus status)
         {
             return _dataAccessHandler.GetTasksFromStatus(status);        
         }

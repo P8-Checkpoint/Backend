@@ -320,7 +320,7 @@ namespace WorkrsBackend.DataHandling
             command.ExecuteNonQuery();
         }
 
-        public void AddTask(ServiceTask task)
+        public void AddTask(ServiceTaskDTO task)
         {
             var command = localDatabase.CreateCommand();
             command.CommandText =
@@ -341,7 +341,7 @@ namespace WorkrsBackend.DataHandling
             command.ExecuteNonQuery();
         }
 
-        public void UpdateTask(ServiceTask task) 
+        public void UpdateTask(ServiceTaskDTO task) 
         {
             var command = localDatabase.CreateCommand();
             command.CommandText =
@@ -368,9 +368,9 @@ namespace WorkrsBackend.DataHandling
             command.ExecuteNonQuery();
         }
 
-        public ServiceTask? GetTaskFromId(Guid taskId)
+        public ServiceTaskDTO? GetTaskFromId(Guid taskId)
         {
-            ServiceTask? retVal = null;
+            ServiceTaskDTO? retVal = null;
             var command = localDatabase.CreateCommand();
 
             command.CommandText =
@@ -384,7 +384,7 @@ namespace WorkrsBackend.DataHandling
             {
                 if (reader.Read())
                 {
-                    retVal = new ServiceTask(
+                    retVal = new ServiceTaskDTO(
                         reader.GetGuid(0), 
                         reader.GetGuid(1), 
                         reader.GetString(2),
@@ -398,9 +398,9 @@ namespace WorkrsBackend.DataHandling
             return retVal;
         }
 
-        public List<ServiceTask> GetTaskForClient(Guid clientId)
+        public List<ServiceTaskDTO> GetTaskForClient(Guid clientId)
         {
-            List<ServiceTask> retVal = new List<ServiceTask>();
+            List<ServiceTaskDTO> retVal = new List<ServiceTaskDTO>();
             var command = localDatabase.CreateCommand();
 
             command.CommandText =
@@ -414,7 +414,7 @@ namespace WorkrsBackend.DataHandling
             {
                 while(reader.Read())
                 {
-                    retVal.Add(new ServiceTask(
+                    retVal.Add(new ServiceTaskDTO(
                         reader.GetGuid(0),
                         reader.GetGuid(1),
                         reader.GetString(2),
@@ -428,9 +428,9 @@ namespace WorkrsBackend.DataHandling
             return retVal;
         }
 
-        public List<ServiceTask> GetTasksFromStatus(ServiceTaskStatus status)
+        public List<ServiceTaskDTO> GetTasksFromStatus(ServiceTaskStatus status)
         {
-            List<ServiceTask> retval = new();
+            List<ServiceTaskDTO> retval = new();
 
             var command = localDatabase.CreateCommand();
             command.CommandText =
@@ -446,7 +446,7 @@ namespace WorkrsBackend.DataHandling
             {
                 while (reader.Read())
                 {
-                   retval.Add(new ServiceTask(
+                   retval.Add(new ServiceTaskDTO(
                    reader.GetGuid(0),
                    reader.GetGuid(1),
                    reader.GetString(2),

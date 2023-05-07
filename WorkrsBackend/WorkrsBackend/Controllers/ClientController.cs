@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using System.Security.Principal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WorkrsBackend.DataHandling;
@@ -12,11 +13,11 @@ namespace WorkrsBackend.Controllers
     public class ClientController : ControllerBase
     {
         ISharedResourceHandler _sharedResourceHandler;
-        IHttpContextAccessor _httpContextAccessor;
-        public ClientController(/*ISharedResourceHandler sharedResourceHandler,*/ IHttpContextAccessor httpContextAccessor)
+        IIdentity? _identity;
+        public ClientController(ISharedResourceHandler sharedResourceHandler, IHttpContextAccessor httpContextAccessor)
         {
-            //_sharedResourceHandler = sharedResourceHandler;
-            _httpContextAccessor = httpContextAccessor;
+            _sharedResourceHandler = sharedResourceHandler;
+            _identity = httpContextAccessor?.HttpContext?.User?.Identity;
         }
 
         [HttpPost]
@@ -30,11 +31,14 @@ namespace WorkrsBackend.Controllers
         [HttpGet]
         public ActionResult GetClient(string clientName) 
         {
-            var username = _httpContextAccessor.HttpContext.User.Identity.Name;
-            ClientDTO c  =_sharedResourceHandler.FindClientByUserName(clientName);
-            if(c != null)
+            if(_identity != null)
             {
-                return Ok(c);
+                var username = _identity.Name;
+                ClientDTO? c = _sharedResourceHandler.FindClientByUserName(clientName);
+                if (c != null)
+                {
+                    return Ok(c);
+                }
             }
 
             return NotFound();

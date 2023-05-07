@@ -82,7 +82,7 @@ namespace WorkrsBackend
                 ClientDTO? c =_dataAccessHandler.FindClientByUserName("test");
                 if(c != null)
                 {
-                    ServiceTask st = new ServiceTask(Guid.NewGuid(), c.ClientId, "myTestTask", ServiceTaskStatus.Created, "p1.source", "p1.backup", "p1.result" );
+                    ServiceTaskDTO st = new ServiceTaskDTO(Guid.NewGuid(), c.ClientId, "myTestTask", ServiceTaskStatus.Created, "p1.source", "p1.backup", "p1.result" );
                     _dataAccessHandler.AddTask(st);
                     st.Name = "test12";
                     _dataAccessHandler.UpdateTask(st);
@@ -304,7 +304,7 @@ namespace WorkrsBackend
                             {
                                 case "startNewTask":
                                     {
-                                        var t = new ServiceTask(
+                                        var t = new ServiceTaskDTO(
                                         Guid.NewGuid(),
                                         c.ClientId,
                                         Encoding.UTF8.GetString(ea.Body.ToArray()),
@@ -490,7 +490,7 @@ namespace WorkrsBackend
             });
         }
 
-        void StopJob(Guid workerId, ServiceTask job)
+        void StopJob(Guid workerId, ServiceTaskDTO job)
         {
             var props = _rabbitMQHandler.GetBasicProperties();
             props.Headers = new Dictionary<string, object>();
@@ -501,7 +501,7 @@ namespace WorkrsBackend
             Log.Debug($"StopJob sent to worker; {workerId}, task: {job.Id}");
         }
 
-        void RecoverJob(ServiceTask job)
+        void RecoverJob(ServiceTaskDTO job)
         {
 
             var worker = _dataAccessHandler.GetAvailableWorker();
@@ -531,7 +531,7 @@ namespace WorkrsBackend
             Log.Debug($"RecoverJob sent to worker; {worker.WorkerId}, task: {job.Id}, fault: {props.Headers["fail"]}");
         }
 
-        void StartJob(ServiceTask job)
+        void StartJob(ServiceTaskDTO job)
         {
             if(!_tasks.ContainsKey(job.Id))
             {
