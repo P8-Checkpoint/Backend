@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Principal;
+using System.Text;
 using WorkrsBackend.DataHandling;
 using WorkrsBackend.DTOs;
 
@@ -36,16 +37,48 @@ namespace WorkrsBackend.Controllers
             return NotFound();
         }
 
+        [HttpGet]
+        public ActionResult<ServiceTaskDTO> Task(Guid taskId)
+        {
+            var result = _sharedResourceHandler.GetTaskFromId(taskId);
+            if (result != null) 
+                return Ok(result);
+
+            return NotFound();
+        }
+
+        public IActionResult Cancel(Guid taskId)
+        {
+            var result = _sharedResourceHandler.GetTaskFromId(taskId);
+            if (result != null)
+            {
+                if(result.Status < ServiceTaskStatus.Cancel )
+                {
+                    result.Status = ServiceTaskStatus.Cancel;
+                    _sharedResourceHandler.UpdateTask(result);
+                    return StatusCode(202);
+                }
+                return BadRequest();
+            }
+
+            return NotFound();
+        }
+
         [HttpPost]
-        public IActionResult Create(ServiceTaskDTO serviceTask)
+        public IActionResult Create(string serviceTaskName)
         {
             if(_identity != null)
             {
-                var username = _sharedResourceHandler.FindClientByUserName(_identity.Name);
-                if (username != null)
+                var client = _sharedResourceHandler.FindClientByUserName(_identity.Name);
+                if (client != null)
                 {
-                    _sharedResourceHandler.AddTask(serviceTask);
-                    return Ok();
+                    var t = new ServiceTaskDTO(
+                                        Guid.NewGuid(),
+                                        client.ClientId,
+                                        serviceTaskName,
+                                        ServiceTaskStatus.Created);
+                    _sharedResourceHandler.AddTask(t);
+                    return StatusCode(201,t);
                 }
             }
 
