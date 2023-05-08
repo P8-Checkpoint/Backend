@@ -1,4 +1,4 @@
-﻿namespace WorkrsBackend.RabbitMQ
+﻿namespace WorkrsBackend.DTOs
 {
     public enum WorkerStatus
     {
@@ -8,24 +8,24 @@
         MIA
     }
 
-    public class Worker
+    public class WorkerDTO
     {
         public Guid WorkerId { get; set; }
         public WorkerStatus Status { get; set; }
         public string ServerName { get; set; }
         public Guid JobId { get; set; } = Guid.Empty;
 
-        public Worker()
+        public WorkerDTO()
         {
 
         }
-        public Worker(Guid workerId, WorkerStatus status, string serverName)
+        public WorkerDTO(Guid workerId, WorkerStatus status, string serverName)
         {
             WorkerId = workerId;
             Status = status;
             ServerName = serverName;
         }
-        public Worker(Guid workerId, WorkerStatus status, string serverName, Guid jobId)
+        public WorkerDTO(Guid workerId, WorkerStatus status, string serverName, Guid jobId)
         {
             WorkerId = workerId;
             Status = status;

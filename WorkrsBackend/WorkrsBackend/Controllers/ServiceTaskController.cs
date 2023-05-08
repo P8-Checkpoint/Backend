@@ -47,6 +47,7 @@ namespace WorkrsBackend.Controllers
             return NotFound();
         }
 
+        [HttpPut]
         public IActionResult Cancel(Guid taskId)
         {
             var result = _sharedResourceHandler.GetTaskFromId(taskId);

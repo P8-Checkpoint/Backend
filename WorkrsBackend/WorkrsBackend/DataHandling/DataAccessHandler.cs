@@ -3,7 +3,6 @@ using Microsoft.Data.Sqlite;
 using System.Data;
 using System.Runtime.ConstrainedExecution;
 using WorkrsBackend.DTOs;
-using WorkrsBackend.RabbitMQ;
 
 namespace WorkrsBackend.DataHandling
 {
@@ -111,7 +110,7 @@ namespace WorkrsBackend.DataHandling
             {
                 if(reader.Read())
                 {
-                    retval = new ClientDTO(reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetString(3));
+                    retval = new ClientDTO(reader.GetGuid(0),reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4));
                 }
             }
 
@@ -132,7 +131,7 @@ namespace WorkrsBackend.DataHandling
             {
                 while (reader.Read())
                 {
-                    retval.Add(reader.GetGuid(0), new ClientDTO(reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetString(3)));
+                    retval.Add(reader.GetGuid(0), new ClientDTO(reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4)));
                 }
             }
 
@@ -188,9 +187,9 @@ namespace WorkrsBackend.DataHandling
             command.ExecuteNonQuery();
         }
 
-        public Dictionary<Guid, Worker> GetWorkerDHT()
+        public Dictionary<Guid, WorkerDTO> GetWorkerDHT()
         {
-            Dictionary<Guid, Worker> retval = new();
+            Dictionary<Guid, WorkerDTO> retval = new();
 
             var command = sharedDatabase.CreateCommand();
             command.CommandText =
@@ -202,14 +201,14 @@ namespace WorkrsBackend.DataHandling
             {
                 while (reader.Read())
                 {
-                    retval.Add(reader.GetGuid(0), new Worker(reader.GetGuid(0), (WorkerStatus)reader.GetInt32(1), reader.GetString(2), Guid.Parse(reader.GetString(3))));
+                    retval.Add(reader.GetGuid(0), new WorkerDTO(reader.GetGuid(0), (WorkerStatus)reader.GetInt32(1), reader.GetString(2), Guid.Parse(reader.GetString(3))));
                 }
             }
 
             return retval;
         }
 
-        public void UpdateWorkerDHT(Worker worker)
+        public void UpdateWorkerDHT(WorkerDTO worker)
         {
             var command = sharedDatabase.CreateCommand();
             command.CommandText =
@@ -227,7 +226,7 @@ namespace WorkrsBackend.DataHandling
             command.ExecuteNonQuery();
         }
 
-        public void AddWorkerToWorkerDHT(Worker worker)
+        public void AddWorkerToWorkerDHT(WorkerDTO worker)
         {
             var command = sharedDatabase.CreateCommand();
             command.CommandText =
@@ -244,9 +243,9 @@ namespace WorkrsBackend.DataHandling
             command.ExecuteNonQuery();
         }
 
-        public Dictionary<string, Server> GetPrimaryServers()
+        public Dictionary<string, ServerDTO> GetPrimaryServers()
         {
-            Dictionary<string, Server> retval = new();
+            Dictionary<string, ServerDTO> retval = new();
 
             var command = sharedDatabase.CreateCommand();
             command.CommandText =
@@ -259,16 +258,16 @@ namespace WorkrsBackend.DataHandling
             {
                 while (reader.Read())
                 {
-                    retval.Add(reader.GetString(0), new Server(reader.GetString(0), reader.GetString(1), (ServerMode)reader.GetInt32(1)));
+                    retval.Add(reader.GetString(0), new ServerDTO(reader.GetString(0), reader.GetString(1), (ServerMode)reader.GetInt32(1)));
                 }
             }
 
             return retval;
         }
 
-        public Server? GetServerInfo(string serverName)
+        public ServerDTO? GetServerInfo(string serverName)
         {
-            Server? server = null;
+            ServerDTO? server = null;
             var command = sharedDatabase.CreateCommand();
             command.CommandText =
             @"
@@ -281,13 +280,13 @@ namespace WorkrsBackend.DataHandling
             {
                 if(reader.Read())
                 {
-                    server = new Server(reader.GetString(0), reader.GetString(1), (ServerMode)reader.GetInt32(2));
+                    server = new ServerDTO(reader.GetString(0), reader.GetString(1), (ServerMode)reader.GetInt32(2));
                 }
             }
             return server;
         }
 
-        public void AddServerToServerDHT(Server server)
+        public void AddServerToServerDHT(ServerDTO server)
         {
             var command = sharedDatabase.CreateCommand();
             command.CommandText =
@@ -303,7 +302,7 @@ namespace WorkrsBackend.DataHandling
             command.ExecuteNonQuery();
         }
 
-        public void UpdateServerDHT(Server server)
+        public void UpdateServerDHT(ServerDTO server)
         {
             var command = sharedDatabase.CreateCommand();
             command.CommandText =

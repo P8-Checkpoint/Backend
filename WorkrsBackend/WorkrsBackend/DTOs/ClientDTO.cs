@@ -13,10 +13,11 @@ namespace WorkrsBackend.DTOs
         public string ServerName { get; set; }
         public string DataServer { get; }
 
-        public ClientDTO(Guid clientId, string username, string serverName, string dataServer)
+        public ClientDTO(Guid clientId, string username, string password, string serverName, string dataServer)
         {
             ClientId = clientId;
             Username = username;
+            Password = password;
             ServerName = serverName;
             DataServer = dataServer;
         }

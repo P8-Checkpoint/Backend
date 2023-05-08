@@ -2,6 +2,7 @@
 using Serilog;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using WorkrsBackend.Config;
 using WorkrsBackend.DataHandling;
 using WorkrsBackend.DTOs;
@@ -22,7 +23,8 @@ namespace WorkrsBackend
         double _mu = 0.001;
         double _interval = 20;
         int _seed = 120;
-        
+        Thread _updateThread;
+        CancellationToken _CancellationToken;
 
         public ServiceLogic(IServerConfig serverConfig, ISharedResourceHandler dataAccessHandler, IRabbitMQHandler rabbitMQHandler)
         {
@@ -30,13 +32,21 @@ namespace WorkrsBackend
             _dataAccessHandler = dataAccessHandler;
             _rabbitMQHandler = rabbitMQHandler;
             _ftpHandler = new FTPHandler();
+            _updateThread = new Thread(ThreadLoop);
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
+            _CancellationToken = cancellationToken;
+            _updateThread.Start();
+            return Task.CompletedTask;
+        }
+
+        void ThreadLoop()
+        {
             Init();
             Log.Information("Init completed");
-            while (!cancellationToken.IsCancellationRequested)
+            while (!_CancellationToken.IsCancellationRequested)
             {
                 try
                 {
@@ -48,7 +58,6 @@ namespace WorkrsBackend
                 }
                 Thread.Sleep(2000);
             }
-            return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
@@ -68,7 +77,7 @@ namespace WorkrsBackend
                 ClientDTO? c = _dataAccessHandler.FindClientByUserName("test");
                 if (c == null)
                 {
-                    _dataAccessHandler.AddClientToClientDHT(new ClientDTO(Guid.NewGuid(), "test", "P1", "P1"));
+                    _dataAccessHandler.AddClientToClientDHT(new ClientDTO(Guid.NewGuid(), "test", "test", "P1", "P1"));
                 }
             }
         }
@@ -99,7 +108,7 @@ namespace WorkrsBackend
             //var t1 = _dataAccessHandler.GetTaskForClient(Guid.Parse("91AD37D3-4057-486E-9005-CE296E7552FB"));
         }
 
-        void CheckKeepAliveForWorkers(List<Worker> workers, int secondsMax)
+        void CheckKeepAliveForWorkers(List<WorkerDTO> workers, int secondsMax)
         {
             Dictionary<Guid, DateTime> local = new Dictionary<Guid, DateTime>();
             lock (_lock)
@@ -111,7 +120,7 @@ namespace WorkrsBackend
                 }
             }
 
-            foreach(Worker worker in workers)
+            foreach(WorkerDTO worker in workers)
             {
                 if(!local.ContainsKey(worker.WorkerId) && worker.Status != WorkerStatus.MIA)
                 {
@@ -133,7 +142,7 @@ namespace WorkrsBackend
             }
         }
 
-        void UpdateWorkerKeerpAlive(Worker worker)
+        void UpdateWorkerKeerpAlive(WorkerDTO worker)
         {
             lock(_lock)
             {
@@ -386,7 +395,7 @@ namespace WorkrsBackend
         {
             Task.Run(() =>
             {
-                Worker? w = _dataAccessHandler.GetWorkerById(Guid.Parse(ea.ConsumerTag));
+                WorkerDTO? w = _dataAccessHandler.GetWorkerById(Guid.Parse(ea.ConsumerTag));
                 if (w != null)
                 {
                     if (ea.BasicProperties.Headers != null)
@@ -558,7 +567,7 @@ namespace WorkrsBackend
             }
         }
 
-        void ResetWorkerAvailable(Worker worker)
+        void ResetWorkerAvailable(WorkerDTO worker)
         {
             worker = _dataAccessHandler.GetWorkerById(worker.WorkerId);
             if(worker != null)
@@ -571,10 +580,10 @@ namespace WorkrsBackend
 
         void AddWorker(Guid workerId)
         {
-            Worker worker = null;
+            WorkerDTO worker = null;
             if (!_dataAccessHandler.WorkerExists(workerId))
             {
-                worker = new Worker(workerId, WorkerStatus.Available, _serverConfig.ServerName);
+                worker = new WorkerDTO(workerId, WorkerStatus.Available, _serverConfig.ServerName);
                 _dataAccessHandler.AddWorkerToWorkerDHT(worker);
             }
             else

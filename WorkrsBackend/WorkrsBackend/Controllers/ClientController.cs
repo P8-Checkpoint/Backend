@@ -29,12 +29,11 @@ namespace WorkrsBackend.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetClient(string clientName) 
+        public ActionResult GetClient() 
         {
             if(_identity != null)
             {
-                var username = _identity.Name;
-                ClientDTO? c = _sharedResourceHandler.FindClientByUserName(clientName);
+                ClientDTO? c = _sharedResourceHandler.FindClientByUserName(_identity.Name);
                 if (c != null)
                 {
                     return Ok(c);

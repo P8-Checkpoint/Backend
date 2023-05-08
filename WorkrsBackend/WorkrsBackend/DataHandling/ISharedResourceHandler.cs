@@ -1,5 +1,4 @@
 ﻿using WorkrsBackend.DTOs;
-using WorkrsBackend.RabbitMQ;
 
 namespace WorkrsBackend.DataHandling
 {
@@ -10,15 +9,16 @@ namespace WorkrsBackend.DataHandling
         public bool ClientExists(Guid clientId);
         public ClientDTO? GetClientById(Guid clientId);
         public bool WorkerExists(Guid clientId);
-        public Worker? GetWorkerById(Guid clientId);
+        public WorkerDTO? GetWorkerById(Guid clientId);
         public ClientDTO? FindClientByUserName(string username);
         public void UpdateClientDHT(ClientDTO client);
-        public void UpdateWorkerDHT(Worker worker);
-        public Worker? GetAvailableWorker();
-        public List<Worker> GetMyWorkers();
-        public Dictionary<string, Server> GetPrimaryServers();
-        public Server? GetServerInfo(string serverName);
-        public void AddWorkerToWorkerDHT(Worker worker);
+        public void UpdateWorkerDHT(WorkerDTO worker);
+        public WorkerDTO? GetAvailableWorker();
+        public List<WorkerDTO> GetMyWorkers();
+        public Dictionary<string, ServerDTO> GetPrimaryServers();
+        public void CreateServer(ServerDTO server);
+        public ServerDTO? GetServerInfo(string serverName);
+        public void AddWorkerToWorkerDHT(WorkerDTO worker);
         public void AddTask(ServiceTaskDTO task);
         public void UpdateTask(ServiceTaskDTO task);
         public ServiceTaskDTO? GetTaskFromId(Guid id);

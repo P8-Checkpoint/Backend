@@ -1,5 +1,4 @@
 ﻿using WorkrsBackend.DTOs;
-using WorkrsBackend.RabbitMQ;
 
 namespace WorkrsBackend.DataHandling
 {
@@ -11,13 +10,13 @@ namespace WorkrsBackend.DataHandling
         public void DeleteClientFromClientDHT(Guid id);
         public Dictionary<Guid, ClientDTO> GetClientDHT();
         public void UpdateClientDHT(ClientDTO client);
-        public void UpdateWorkerDHT(Worker worker);
-        public Dictionary<string, Server> GetPrimaryServers();
-        public Server? GetServerInfo(string serverName);
-        public Dictionary<Guid, Worker> GetWorkerDHT();
-        public void AddWorkerToWorkerDHT(Worker worker);
-        public void AddServerToServerDHT(Server serverName);
-        public void UpdateServerDHT(Server serverName);
+        public void UpdateWorkerDHT(WorkerDTO worker);
+        public Dictionary<string, ServerDTO> GetPrimaryServers();
+        public ServerDTO? GetServerInfo(string serverName);
+        public Dictionary<Guid, WorkerDTO> GetWorkerDHT();
+        public void AddWorkerToWorkerDHT(WorkerDTO worker);
+        public void AddServerToServerDHT(ServerDTO serverName);
+        public void UpdateServerDHT(ServerDTO serverName);
         public void AddTask(ServiceTaskDTO task);
         public void UpdateTask(ServiceTaskDTO task);
         public ServiceTaskDTO? GetTaskFromId(Guid id);

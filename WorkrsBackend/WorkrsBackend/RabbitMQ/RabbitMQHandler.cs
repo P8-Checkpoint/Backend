@@ -2,6 +2,7 @@
 using RabbitMQ.Client.Events;
 using System.Text;
 using WorkrsBackend.Config;
+using WorkrsBackend.DTOs;
 
 namespace WorkrsBackend.RabbitMQ
 {

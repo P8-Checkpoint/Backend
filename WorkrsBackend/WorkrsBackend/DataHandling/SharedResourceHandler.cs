@@ -12,13 +12,13 @@ namespace WorkrsBackend.DataHandling
 {
     public class SharedResourceHandler : ISharedResourceHandler
     {
-        int serverCnt = 2;
+        int serverCnt = 1;
         bool _lockClient = false;
         bool _lockWorker = false;
         bool _lockServer = false;
         public Dictionary<Guid, ClientDTO> _clientsDHT = new();
-        public Dictionary<Guid, Worker> _workersDHT = new();
-        public Dictionary<string, Server> _serverDHT = new();
+        public Dictionary<Guid, WorkerDTO> _workersDHT = new();
+        public Dictionary<string, ServerDTO> _serverDHT = new();
         private ReaderWriterLockSlim _lockClientDHT = new ReaderWriterLockSlim();
         private ReaderWriterLockSlim _lockWorkerDHT = new ReaderWriterLockSlim();
         private ReaderWriterLockSlim _lockServerDHT = new ReaderWriterLockSlim();
@@ -52,8 +52,8 @@ namespace WorkrsBackend.DataHandling
 
             if(!_serverDHT.ContainsKey(_serverConfig.ServerName))
             {
-                CreateServer(new Server(_serverConfig.ServerName, _serverConfig.BackupServer, (ServerMode)_serverConfig.Mode));
-                CreateServer(new Server("p2","b2", ServerMode.Secondary));
+                CreateServer(new ServerDTO(_serverConfig.ServerName, _serverConfig.BackupServer, (ServerMode)_serverConfig.Mode));
+                CreateServer(new ServerDTO("p2","b2", ServerMode.Secondary));
 
             }
         }
@@ -165,7 +165,7 @@ namespace WorkrsBackend.DataHandling
 
         void HandleServerChange(string s)
         {
-            Server? obj = JsonSerializer.Deserialize<Server?>(s);
+            ServerDTO? obj = JsonSerializer.Deserialize<ServerDTO?>(s);
             if (obj != null)
             {
                 if (_serverDHT.ContainsKey(obj.Name))
@@ -183,7 +183,7 @@ namespace WorkrsBackend.DataHandling
 
         void HandleWorkerChange(string s)
         {
-            Worker? obj = JsonSerializer.Deserialize<Worker?>(s);
+            WorkerDTO? obj = JsonSerializer.Deserialize<WorkerDTO?>(s);
             if (obj != null)
             {
                 if (_workersDHT.ContainsKey(obj.WorkerId))
@@ -343,14 +343,14 @@ namespace WorkrsBackend.DataHandling
             MakeChange(client, ChangeType.Client);
         }
 
-        public void UpdateWorkerDHT(Worker worker)
+        public void UpdateWorkerDHT(WorkerDTO worker)
         {
             MakeChange(worker, ChangeType.Worker);
         }
 
-        public List<Worker> GetMyWorkers()
+        public List<WorkerDTO> GetMyWorkers()
         {
-            List<Worker> retVal = new List<Worker>();
+            List<WorkerDTO> retVal = new List<WorkerDTO>();
             
             foreach(var keyValuePair in _workersDHT.Where(w => w.Value.ServerName == _serverConfig.ServerName).ToList())
             {
@@ -360,7 +360,7 @@ namespace WorkrsBackend.DataHandling
             return retVal;
         }
 
-        public Dictionary<string, Server> GetPrimaryServers()
+        public Dictionary<string, ServerDTO> GetPrimaryServers()
         {
             
             while (_lockClient) ;
@@ -372,7 +372,7 @@ namespace WorkrsBackend.DataHandling
             finally { _lockClientDHT.ExitReadLock(); }
         }
 
-        public Server? GetServerInfo(string serverName)
+        public ServerDTO? GetServerInfo(string serverName)
         {
             
             while (_lockClient) ;
@@ -384,12 +384,12 @@ namespace WorkrsBackend.DataHandling
             finally { _lockClientDHT.ExitReadLock(); }
         }
 
-        public void CreateServer(Server server)
+        public void CreateServer(ServerDTO server)
         {
             MakeChange(server, ChangeType.Server);
         }
 
-        public void AddWorkerToWorkerDHT(Worker worker)
+        public void AddWorkerToWorkerDHT(WorkerDTO worker)
         {
             MakeChange(worker, ChangeType.Worker);
         }
@@ -439,9 +439,9 @@ namespace WorkrsBackend.DataHandling
             }
         }
 
-        public Worker? GetWorkerById(Guid workerId)
+        public WorkerDTO? GetWorkerById(Guid workerId)
         {
-            Worker? worker = null;
+            WorkerDTO? worker = null;
             while (_lockWorker);
             _lockWorkerDHT.EnterReadLock();
             try
@@ -476,7 +476,7 @@ namespace WorkrsBackend.DataHandling
             return _dataAccessHandler.GetTaskForClient(clientId);
         }
 
-        public Worker? GetAvailableWorker()
+        public WorkerDTO? GetAvailableWorker()
         {
             while (_lockWorker) Thread.Sleep(20);
             _lockWorkerDHT.EnterReadLock();

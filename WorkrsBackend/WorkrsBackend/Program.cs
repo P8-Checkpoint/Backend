@@ -51,7 +51,7 @@ namespace WorkrsBackend
             builder.Services.AddSingleton<IDataAccessHandler, DataAccessHandler>();
             builder.Services.AddSingleton<ISharedResourceHandler, SharedResourceHandler>();
             builder.Services.AddSingleton<IRabbitMQHandler, RabbitMQHandler>();
-            //builder.Services.AddHostedService<ServiceLogic>();
+            builder.Services.AddHostedService<ServiceLogic>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
