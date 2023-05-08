@@ -53,7 +53,7 @@ namespace WorkrsBackend.DataHandling
             if(!_serverDHT.ContainsKey(_serverConfig.ServerName))
             {
                 CreateServer(new ServerDTO(_serverConfig.ServerName, _serverConfig.BackupServer, (ServerMode)_serverConfig.Mode));
-                CreateServer(new ServerDTO("p2","b2", ServerMode.Secondary));
+                //CreateServer(new ServerDTO("p2","b2", ServerMode.Secondary));
 
             }
         }
