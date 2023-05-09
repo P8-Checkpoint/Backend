@@ -34,7 +34,7 @@ namespace BackendTestProject
         [Fact]
         public void CreateNewClient_ClientKnown_ExpectClientFound()
         {
-            ClientDTO expected = new ClientDTO(Guid.NewGuid(), "Morgan Freeman", "myServer", "myDatServer");
+            ClientDTO expected = new ClientDTO(Guid.NewGuid(), "Morgan Freeman", "myServer", "myDatServer", "","","");
 
             _sut.AddClientToClientDHT(expected);
             var actual = _sut.FindClientByUserName(expected.Username);
@@ -50,7 +50,7 @@ namespace BackendTestProject
         public void UpdateClient_ClientKnown_ExpectClientFound()
         {
 
-            ClientDTO expected = new ClientDTO(Guid.NewGuid(), "Taylor swift", "myServer", "myDatServer");
+            ClientDTO expected = new ClientDTO(Guid.NewGuid(), "Taylor swift", "myServer", "myDatServer","","","");
             _sut.AddClientToClientDHT(expected);
             var actual = _sut.FindClientByUserName(expected.Username);
 
@@ -68,7 +68,7 @@ namespace BackendTestProject
         {
 
             var clientID = Guid.NewGuid();
-            ClientDTO client = new ClientDTO(clientID, "test", "myServer", "myDatServer");
+            ClientDTO client = new ClientDTO(clientID, "test", "myServer", "myDatServer","","","");
             ServiceTaskDTO task = new ServiceTaskDTO(Guid.NewGuid(),
                                                 clientID,
                                                 "testjob",

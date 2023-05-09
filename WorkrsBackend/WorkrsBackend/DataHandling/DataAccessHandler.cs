@@ -66,7 +66,9 @@ namespace WorkrsBackend.DataHandling
                     username TEXT NOT NULL,
                     password TEXT NOT NULL,
                     servername TEXT NOT NULL,
-                    dataserver TEXT NOT NULL
+                    dataserver TEXT NOT NULL,
+                    firstname TEXT NOT NULL,
+                    lastname TEXT NOT NULL,
                 );
             ";
             command.ExecuteNonQuery();
@@ -110,7 +112,7 @@ namespace WorkrsBackend.DataHandling
             {
                 if(reader.Read())
                 {
-                    retval = new ClientDTO(reader.GetGuid(0),reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4));
+                    retval = new ClientDTO(reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5), reader.GetString(6));
                 }
             }
 
@@ -131,7 +133,7 @@ namespace WorkrsBackend.DataHandling
             {
                 while (reader.Read())
                 {
-                    retval.Add(reader.GetGuid(0), new ClientDTO(reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4)));
+                    retval.Add(reader.GetGuid(0), new ClientDTO(reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5), reader.GetString(6)));
                 }
             }
 
@@ -144,7 +146,7 @@ namespace WorkrsBackend.DataHandling
             command.CommandText =
             @"
                     UPDATE clientdht
-                    SET servername = $servername, username = $username, dataserver = $dataserver
+                    SET servername = $servername, username = $username, dataserver = $dataserver, firstname = $firstname, lastname = $lastname
                     WHERE userId = $clientId
                 ";
 
@@ -152,6 +154,8 @@ namespace WorkrsBackend.DataHandling
             command.Parameters.AddWithValue("$username", client.Username);
             command.Parameters.AddWithValue("$servername", client.ServerName);
             command.Parameters.AddWithValue("$dataserver", client.DataServer);
+            command.Parameters.AddWithValue("firstname", client.Firstname);
+            command.Parameters.AddWithValue("$lastname", client.Lastname);
 
             command.ExecuteNonQuery();
         }
@@ -161,8 +165,8 @@ namespace WorkrsBackend.DataHandling
             var command = sharedDatabase.CreateCommand();
             command.CommandText =
             @"
-                    INSERT INTO clientdht (userId, username, password, servername, dataserver)
-                    VALUES ($clientId, $username, $password, $servername, $dataserver);
+                    INSERT INTO clientdht (userId, username, password, servername, dataserver, firstname, lastname)
+                    VALUES ($clientId, $username, $password, $servername, $dataserver, $firstname, $lastname);
                 ";
 
             command.Parameters.AddWithValue("$clientId", client.ClientId);
@@ -170,6 +174,8 @@ namespace WorkrsBackend.DataHandling
             command.Parameters.AddWithValue("$password", client.Password);
             command.Parameters.AddWithValue("$servername", client.ServerName);
             command.Parameters.AddWithValue("$dataserver", client.DataServer);
+            command.Parameters.AddWithValue("$firstname", client.Firstname);
+            command.Parameters.AddWithValue("$lastname", client.Lastname);
 
             command.ExecuteNonQuery();
         }
