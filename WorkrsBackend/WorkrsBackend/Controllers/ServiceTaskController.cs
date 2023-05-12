@@ -80,6 +80,34 @@ namespace WorkrsBackend.Controllers
             return NotFound();
         }
 
+        [HttpPut]
+        public IActionResult Stop(Guid taskId) 
+        {
+            var task = _sharedResourceHandler.GetTaskFromId(taskId);
+            if(task != null)
+            {
+                task.Status = ServiceTaskStatus.Stop;
+                _sharedResourceHandler.UpdateTask(task);
+                return Ok();
+
+            }
+            return NotFound();
+        }
+
+        [HttpPut]
+        public IActionResult Start(Guid taskId)
+        {
+            var task = _sharedResourceHandler.GetTaskFromId(taskId);
+            if (task != null)
+            {
+                task.Status = ServiceTaskStatus.Starting;
+                _sharedResourceHandler.UpdateTask(task);
+                return Ok();
+
+            }
+            return NotFound();
+        }
+
         [HttpPost]
         public IActionResult Create(string name, string description)
         {

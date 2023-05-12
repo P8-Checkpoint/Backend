@@ -8,7 +8,9 @@
         Canceled,
         Cancel,
         Failed,
-        Completed
+        Completed,
+        Stop,
+        Stopped,
     }
 
     public class ServiceTaskDTO
@@ -37,7 +39,7 @@
             BackupPath = backupPath;
             ResultPath = resultPath;
         }
-        public ServiceTaskDTO(Guid id, Guid clientId, string name, string description, DateTime dateAdded, DateTime lastActivity, ServiceTaskStatus status)
+        public ServiceTaskDTO(Guid id, Guid clientId, string name, string description, DateTime dateAdded, DateTime lastActivity, ServiceTaskStatus status):this()
         {
             Id = id;
             ClientId = clientId;
@@ -47,12 +49,18 @@
             LastActivity = lastActivity;
             Status = status;
         }
-        public ServiceTaskDTO(Guid id, Guid clientId, string name, ServiceTaskStatus status)
+        public ServiceTaskDTO(Guid id, Guid clientId, string name, ServiceTaskStatus status):this()
         {
             Id = id;
             ClientId = clientId;
             Name = name;
             Status = status;
+        }
+        public ServiceTaskDTO()
+        {
+            SourcePath = "";
+            BackupPath = "";
+            ResultPath = "";
         }
     }
 }
