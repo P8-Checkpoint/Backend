@@ -48,9 +48,9 @@ namespace WorkrsBackend.Controllers
         }
 
         [HttpPut]
-        public IActionResult Cancel(Guid taskId)
+        public IActionResult Cancel(ServiceTaskDTO task)
         {
-            var result = _sharedResourceHandler.GetTaskFromId(taskId);
+            var result = _sharedResourceHandler.GetTaskFromId(task.Id);
             if (result != null)
             {
                 if(result.Status < ServiceTaskStatus.Cancel )

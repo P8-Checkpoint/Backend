@@ -57,7 +57,7 @@ namespace WorkrsBackend.Controllers
                     var token = tokenHandler.CreateToken(tokenDescriptor);
                     //var jwtToken = tokenHandler.WriteToken(token);
                     var stringToken = tokenHandler.WriteToken(token);
-                    return Results.Ok(stringToken);
+                    return Results.Ok(new { token = stringToken });
                 }
             }
             return Results.Unauthorized();
