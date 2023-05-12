@@ -91,7 +91,17 @@ namespace WorkrsBackend
                 ClientDTO? c =_dataAccessHandler.FindClientByUserName("test");
                 if(c != null)
                 {
-                    ServiceTaskDTO st = new ServiceTaskDTO(Guid.NewGuid(), c.ClientId, "myTestTask", ServiceTaskStatus.Created, "p1.source", "p1.backup", "p1.result" );
+                    ServiceTaskDTO st = new ServiceTaskDTO(
+                        Guid.NewGuid(),
+                        c.ClientId,
+                        "myTestTask",
+                        "myTestTaskDesc",
+                        DateTime.UtcNow, 
+                        DateTime.UtcNow,
+                        ServiceTaskStatus.Created,
+                        "p1.source",
+                        "p1.backup",
+                        "p1.result");
                     _dataAccessHandler.AddTask(st);
                     st.Name = "test12";
                     _dataAccessHandler.UpdateTask(st);

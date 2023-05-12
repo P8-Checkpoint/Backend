@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.TagHelpers.Cache;
 using Microsoft.Data.Sqlite;
+using System;
 using System.Data;
 using System.Runtime.ConstrainedExecution;
 using WorkrsBackend.DTOs;
@@ -41,6 +42,9 @@ namespace WorkrsBackend.DataHandling
                     tasksId TEXT PRIMARY KEY NOT NULL, 
                     clientId TEXT NOT NULL,
                     name TEXT NOT NULL,
+                    description TEXT NOT NULL,
+                    dateAdded DATETIME NOT NULL,
+                    lastActivity DATETIME NOT NULL,
                     status INTEGER NOT NULL,
                     sourcePath TEXT NOT NULL,
                     backupPath TEXT NOT NULL,
@@ -68,7 +72,7 @@ namespace WorkrsBackend.DataHandling
                     servername TEXT NOT NULL,
                     dataserver TEXT NOT NULL,
                     firstname TEXT NOT NULL,
-                    lastname TEXT NOT NULL,
+                    lastname TEXT NOT NULL
                 );
             ";
             command.ExecuteNonQuery();
@@ -331,12 +335,15 @@ namespace WorkrsBackend.DataHandling
             command.CommandText =
             @"
                     INSERT INTO serviceTask 
-                    (tasksId, name, clientId, status, sourcePath, backupPath, resultPath)
+                    (tasksId, name, description, dateAdded, lastActivity, clientId, status, sourcePath, backupPath, resultPath)
                     VALUES 
-                    ($tasksId, $name, $clientId, $status, $sourcePath, $backupPath, $resultPath);
+                    ($tasksId, $name, $description, $dateAdded, $lastActivity, $clientId, $status, $sourcePath, $backupPath, $resultPath);
                 ";
             command.Parameters.AddWithValue("$tasksId", task.Id);
             command.Parameters.AddWithValue("$name", task.Name);
+            command.Parameters.AddWithValue("$description", task.Description);
+            command.Parameters.AddWithValue("$dateAdded", task.DateAdded);
+            command.Parameters.AddWithValue("$lastActivity", task.LastActivity);
             command.Parameters.AddWithValue("$clientId", task.ClientId);
             command.Parameters.AddWithValue("$status", task.Status);
             command.Parameters.AddWithValue("$sourcePath", task.SourcePath);
@@ -354,6 +361,9 @@ namespace WorkrsBackend.DataHandling
                     UPDATE serviceTask
                     SET 
                     name = $name, 
+                    description = $description,
+                    dateAdded = $dateAdded,
+                    lastActivity = $lastActivity,
                     clientId = $clientId, 
                     status = $status,
                     sourcePath = $sourcePath,
@@ -363,6 +373,9 @@ namespace WorkrsBackend.DataHandling
                 ";
 
             command.Parameters.AddWithValue("$name", task.Name);
+            command.Parameters.AddWithValue("description", task.DateAdded);
+            command.Parameters.AddWithValue("dateAdded", task.DateAdded);
+            command.Parameters.AddWithValue("lastActivity", task.LastActivity);
             command.Parameters.AddWithValue("$clientId", task.ClientId);
             command.Parameters.AddWithValue("$status", task.Status);
             command.Parameters.AddWithValue("$sourcePath", task.SourcePath);
@@ -372,6 +385,19 @@ namespace WorkrsBackend.DataHandling
 
             command.ExecuteNonQuery();
         }
+
+        /*
+         *  tasksId TEXT PRIMARY KEY NOT NULL, 
+                    clientId TEXT NOT NULL,
+                    name TEXT NOT NULL,
+                    description TEXT NOT NULL,
+                    dateAdded DATETIME NOT NULL,
+                    lastActivity DATETIME NOT NULL,
+                    status INTEGER NOT NULL,
+                    sourcePath TEXT NOT NULL,
+                    backupPath TEXT NOT NULL,
+                    resultPath TEXT NOT NULL
+         */
 
         public ServiceTaskDTO? GetTaskFromId(Guid taskId)
         {
@@ -393,10 +419,13 @@ namespace WorkrsBackend.DataHandling
                         reader.GetGuid(0), 
                         reader.GetGuid(1), 
                         reader.GetString(2),
-                        (ServiceTaskStatus)reader.GetInt32(3),
-                        reader.GetString(4),
-                        reader.GetString(5),
-                        reader.GetString(6));
+                        reader.GetString(3),
+                        reader.GetDateTime(4),
+                        reader.GetDateTime(5),
+                        (ServiceTaskStatus)reader.GetInt32(6),
+                        reader.GetString(7),
+                        reader.GetString(8),
+                        reader.GetString(9));
                 }
             }
 
@@ -423,10 +452,13 @@ namespace WorkrsBackend.DataHandling
                         reader.GetGuid(0),
                         reader.GetGuid(1),
                         reader.GetString(2),
-                        (ServiceTaskStatus)reader.GetInt32(3),
-                        reader.GetString(4),
-                        reader.GetString(5),
-                        reader.GetString(6)));
+                        reader.GetString(3),
+                        reader.GetDateTime(4),
+                        reader.GetDateTime(5),
+                        (ServiceTaskStatus)reader.GetInt32(6),
+                        reader.GetString(7),
+                        reader.GetString(8),
+                        reader.GetString(9)));
                 }                    
             }
 
@@ -452,13 +484,16 @@ namespace WorkrsBackend.DataHandling
                 while (reader.Read())
                 {
                    retval.Add(new ServiceTaskDTO(
-                   reader.GetGuid(0),
-                   reader.GetGuid(1),
-                   reader.GetString(2),
-                   (ServiceTaskStatus)reader.GetInt32(3),
-                   reader.GetString(4),
-                   reader.GetString(5),
-                   reader.GetString(6)));
+                        reader.GetGuid(0),
+                        reader.GetGuid(1),
+                        reader.GetString(2),
+                        reader.GetString(3),
+                        reader.GetDateTime(4),
+                        reader.GetDateTime(5),
+                        (ServiceTaskStatus)reader.GetInt32(6),
+                        reader.GetString(7),
+                        reader.GetString(8),
+                        reader.GetString(9)));
                 }
             }
             return retval;
