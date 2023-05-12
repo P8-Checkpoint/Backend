@@ -65,8 +65,23 @@ namespace WorkrsBackend.Controllers
             return NotFound();
         }
 
+        [HttpPut]
+        public IActionResult Update(ServiceTaskDTO serviceTask) 
+        {
+            var task = _sharedResourceHandler.GetTaskFromId(serviceTask.Id);
+            if (task != null)
+            {
+                task.Description = serviceTask.Description;
+                task.Name = serviceTask.Name;
+                _sharedResourceHandler.UpdateTask(task);
+                return Ok();
+            }
+
+            return NotFound();
+        }
+
         [HttpPost]
-        public IActionResult Create(string serviceTaskName)
+        public IActionResult Create(string name, string description)
         {
             if(_identity != null)
             {
@@ -76,7 +91,10 @@ namespace WorkrsBackend.Controllers
                     var t = new ServiceTaskDTO(
                                         Guid.NewGuid(),
                                         client.ClientId,
-                                        serviceTaskName,
+                                        name,
+                                        description,
+                                        DateTime.UtcNow,
+                                        DateTime.UtcNow,
                                         ServiceTaskStatus.Created);
                     _sharedResourceHandler.AddTask(t);
                     return StatusCode(201,t);

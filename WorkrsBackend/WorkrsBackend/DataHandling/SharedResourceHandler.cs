@@ -463,6 +463,7 @@ namespace WorkrsBackend.DataHandling
 
         public void UpdateTask(ServiceTaskDTO task)
         {
+            task.LastActivity = DateTime.UtcNow;
             _dataAccessHandler.UpdateTask(task);
         }
 

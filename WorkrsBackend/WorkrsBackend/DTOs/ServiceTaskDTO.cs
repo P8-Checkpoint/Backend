@@ -37,6 +37,16 @@
             BackupPath = backupPath;
             ResultPath = resultPath;
         }
+        public ServiceTaskDTO(Guid id, Guid clientId, string name, string description, DateTime dateAdded, DateTime lastActivity, ServiceTaskStatus status)
+        {
+            Id = id;
+            ClientId = clientId;
+            Name = name;
+            Description = description;
+            DateAdded = dateAdded;
+            LastActivity = lastActivity;
+            Status = status;
+        }
         public ServiceTaskDTO(Guid id, Guid clientId, string name, ServiceTaskStatus status)
         {
             Id = id;
