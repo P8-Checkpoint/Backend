@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Principal;
 using System.Text;
 using WorkrsBackend.DataHandling;
 using WorkrsBackend.DTOs;
+using WorkrsBackend.FTP;
 
 namespace WorkrsBackend.Controllers
 {
@@ -95,15 +97,54 @@ namespace WorkrsBackend.Controllers
         }
 
         [HttpPut]
+        public ActionResult<PrepareDTO> Prepare(Guid taskId)
+        {
+            var worker = _sharedResourceHandler.GetAvailableWorker();
+
+            if (worker != null)
+            {
+                var t = _sharedResourceHandler.GetTaskFromId(taskId);
+                var c = _sharedResourceHandler.FindClientByUserName(_identity.Name);
+                if(c != null && t != null) 
+                {
+                    string source = $"{c.ClientId}/{t.Id}/source/";
+                    string backup = $"{c.ClientId}/{t.Id}/backup/";
+                    string result = $"{c.ClientId}/{t.Id}/result/";
+
+                    t.SourcePath = $"{worker.LANIp}:{worker.FTPUser}:{worker.FTPPassword}:{source}{t.Name}.py";
+                    t.BackupPath = $"{worker.LANIp}:{worker.FTPUser}:{worker.FTPPassword}:{backup}";
+                    t.ResultPath = $"{worker.LANIp}:{worker.FTPUser}:{worker.FTPPassword}:{result}";
+                    t.Status = ServiceTaskStatus.Queued;
+
+                    PrepareDTO retval = new PrepareDTO()
+                    {
+                        Wifi = new WifiDTO() { Password = "Worker1AP", SSID = "Worker1AP" },
+                        ServiceTask = t
+                    };
+
+                    worker.Status = WorkerStatus.Reserved;
+                    worker.JobId = taskId;
+                    _sharedResourceHandler.UpdateWorkerDHT(worker);
+                    _sharedResourceHandler.UpdateTask(t);
+                    return Ok(retval);
+                }
+            }
+            return NotFound();
+        }
+
+        [HttpPut]
         public IActionResult Start(Guid taskId)
         {
             var task = _sharedResourceHandler.GetTaskFromId(taskId);
             if (task != null)
             {
-                task.Status = ServiceTaskStatus.Starting;
-                _sharedResourceHandler.UpdateTask(task);
-                return Ok();
-
+                if(task.Status == ServiceTaskStatus.Queued)
+                {
+                    task.Status = ServiceTaskStatus.Starting;
+                    _sharedResourceHandler.UpdateTask(task);
+                    return Ok();
+                }
+                return BadRequest();
             }
             return NotFound();
         }

@@ -113,9 +113,9 @@ namespace WorkrsBackend
             HandleStartTasks();
             HandleInProgressTasks();
             HandleCancelTasks();
+            HandleStopTask();
+            HandleQueuedTasks();
             Log.Debug("Update alive");
-            //var t = _dataAccessHandler.GetTaskFromId(Guid.Parse("1EA20BB4-A25B-4507-928C-E1C5C860B18E"));
-            //var t1 = _dataAccessHandler.GetTaskForClient(Guid.Parse("91AD37D3-4057-486E-9005-CE296E7552FB"));
         }
 
         void CheckKeepAliveForWorkers(List<WorkerDTO> workers, int secondsMax)
@@ -163,12 +163,10 @@ namespace WorkrsBackend
                     _workerKeepAlive.Add(worker.WorkerId, DateTime.UtcNow);
             }
         }
-        
-
 
         void HandleStartTasks()
         {
-            var jobs = _dataAccessHandler.GetTasksFromStatus(ServiceTaskStatus.Created);
+            var jobs = _dataAccessHandler.GetTasksFromStatus(ServiceTaskStatus.Starting);
             if(jobs.Count > 0)
                 Log.Debug($"HandleStartTasks, jobs to start: {jobs.Count}");
             foreach (var job in jobs)
@@ -221,6 +219,51 @@ namespace WorkrsBackend
                 else
                 {
                     job.Status = ServiceTaskStatus.Canceled;
+                    _dataAccessHandler.UpdateTask(job);
+                }
+            }
+        }
+
+        void HandleStopTask()
+        {
+            var jobs = _dataAccessHandler.GetTasksFromStatus(ServiceTaskStatus.Stop);
+            if (jobs.Count > 0)
+                Log.Debug($"HandleCancelTasks, jobs to cancel: {jobs.Count}");
+            foreach(var job in jobs)
+            {
+                HandleStopTask(job);
+            }
+        }
+
+        void HandleStopTask(ServiceTaskDTO job)
+        {
+            TaskInProgress tp;
+            if (_tasks.TryGetValue(job.Id, out tp))
+            {
+                if (tp.Worker != null)
+                    StopJob(tp.Worker.WorkerId, tp.ServiceTask);
+                else
+                {
+                    var t = _dataAccessHandler.GetTaskFromId(tp.ServiceTask.Id);
+                    t.Status = ServiceTaskStatus.Stopped;
+                    _dataAccessHandler.UpdateTask(t);
+                }
+            }
+            else
+            {
+                job.Status = ServiceTaskStatus.Stopped;
+                _dataAccessHandler.UpdateTask(job);
+            }
+        }
+
+        void HandleQueuedTasks()
+        {
+             var val = _dataAccessHandler.GetTasksFromStatus(ServiceTaskStatus.Queued);
+            foreach(var job in val)
+            {
+                if (DateTime.UtcNow - job.LastActivity < TimeSpan.FromMinutes(3))
+                {
+                    job.Status = ServiceTaskStatus.Created;
                     _dataAccessHandler.UpdateTask(job);
                 }
             }

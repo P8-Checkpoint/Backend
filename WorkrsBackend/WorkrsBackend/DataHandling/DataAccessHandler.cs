@@ -83,7 +83,10 @@ namespace WorkrsBackend.DataHandling
                     workerId TEXT PRIMARY KEY NOT NULL,
                     status INTEGER NOT NULL,
                     serverName TEXT NOT NULL,
-                    jobId TEXT NOT NULL
+                    jobId TEXT NOT NULL,
+                    lanIP TEXT NOT NULL,
+                    ftpUser TEXT NOT NULL,
+                    ftpPassword TEXT NOT NULL
                 );
             ";
             command.ExecuteNonQuery();
@@ -211,7 +214,15 @@ namespace WorkrsBackend.DataHandling
             {
                 while (reader.Read())
                 {
-                    retval.Add(reader.GetGuid(0), new WorkerDTO(reader.GetGuid(0), (WorkerStatus)reader.GetInt32(1), reader.GetString(2), Guid.Parse(reader.GetString(3))));
+                    retval.Add(reader.GetGuid(0), new WorkerDTO(
+                        reader.GetGuid(0), 
+                        (WorkerStatus)reader.GetInt32(1), 
+                        reader.GetString(2), 
+                        Guid.Parse(reader.GetString(3)),
+                        reader.GetString(4),
+                        reader.GetString(5),
+                        reader.GetString(6)
+                        ));
                 }
             }
 
@@ -224,7 +235,7 @@ namespace WorkrsBackend.DataHandling
             command.CommandText =
             @"
                     UPDATE workerdht
-                    SET status = $status, serverName = $serverName, jobId = $jobId
+                    SET status = $status, serverName = $serverName, jobId = $jobId, lanIP = $lanIP, ftpUser = $ftpUser, ftpPassword = $ftpPassword
                     WHERE workerId = $workerId
                 ";
 
@@ -232,7 +243,9 @@ namespace WorkrsBackend.DataHandling
             command.Parameters.AddWithValue("$status", (int)worker.Status);
             command.Parameters.AddWithValue("$serverName", worker.ServerName);
             command.Parameters.AddWithValue("$jobId", worker.JobId);
-
+            command.Parameters.AddWithValue("$lanIP", worker.LANIp);
+            command.Parameters.AddWithValue("$ftpUser", worker.FTPUser);
+            command.Parameters.AddWithValue("$ftpPassword", worker.FTPPassword);
             command.ExecuteNonQuery();
         }
 
@@ -241,15 +254,17 @@ namespace WorkrsBackend.DataHandling
             var command = sharedDatabase.CreateCommand();
             command.CommandText =
             @"
-                    INSERT INTO workerdht (workerId, status, serverName, jobId)
-                    VALUES ($workerId, $status, $serverName, $jobId);
+                    INSERT INTO workerdht (workerId, status, serverName, jobId, lanIP, ftpUser, ftpPassword)
+                    VALUES ($workerId, $status, $serverName, $jobId, $lanIP, $ftpUser, $ftpPassword);
                 ";
 
             command.Parameters.AddWithValue("$workerId", worker.WorkerId);
             command.Parameters.AddWithValue("$status", (int)worker.Status);
             command.Parameters.AddWithValue("$serverName", worker.ServerName);
             command.Parameters.AddWithValue("$jobId", worker.JobId);
-
+            command.Parameters.AddWithValue("$lanIP", worker.JobId);
+            command.Parameters.AddWithValue("$ftpUser", worker.JobId);
+            command.Parameters.AddWithValue("$ftpPassword", worker.JobId);
             command.ExecuteNonQuery();
         }
 
@@ -373,9 +388,9 @@ namespace WorkrsBackend.DataHandling
                 ";
 
             command.Parameters.AddWithValue("$name", task.Name);
-            command.Parameters.AddWithValue("description", task.DateAdded);
-            command.Parameters.AddWithValue("dateAdded", task.DateAdded);
-            command.Parameters.AddWithValue("lastActivity", task.LastActivity);
+            command.Parameters.AddWithValue("$description", task.Description);
+            command.Parameters.AddWithValue("$dateAdded", task.DateAdded);
+            command.Parameters.AddWithValue("$lastActivity", task.LastActivity);
             command.Parameters.AddWithValue("$clientId", task.ClientId);
             command.Parameters.AddWithValue("$status", task.Status);
             command.Parameters.AddWithValue("$sourcePath", task.SourcePath);
@@ -385,19 +400,6 @@ namespace WorkrsBackend.DataHandling
 
             command.ExecuteNonQuery();
         }
-
-        /*
-         *  tasksId TEXT PRIMARY KEY NOT NULL, 
-                    clientId TEXT NOT NULL,
-                    name TEXT NOT NULL,
-                    description TEXT NOT NULL,
-                    dateAdded DATETIME NOT NULL,
-                    lastActivity DATETIME NOT NULL,
-                    status INTEGER NOT NULL,
-                    sourcePath TEXT NOT NULL,
-                    backupPath TEXT NOT NULL,
-                    resultPath TEXT NOT NULL
-         */
 
         public ServiceTaskDTO? GetTaskFromId(Guid taskId)
         {

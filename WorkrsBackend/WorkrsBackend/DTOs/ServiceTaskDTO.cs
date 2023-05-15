@@ -11,6 +11,7 @@
         Completed,
         Stop,
         Stopped,
+        Queued,
     }
 
     public class ServiceTaskDTO
