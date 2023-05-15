@@ -637,6 +637,8 @@ namespace WorkrsBackend
             if (!_dataAccessHandler.WorkerExists(workerId))
             {
                 worker = new WorkerDTO(workerId, WorkerStatus.Available, _serverConfig.ServerName);
+                worker.FTPUser = "ftpuser";
+                worker.FTPPassword = "ftpuser";
                 _dataAccessHandler.AddWorkerToWorkerDHT(worker);
             }
             else
