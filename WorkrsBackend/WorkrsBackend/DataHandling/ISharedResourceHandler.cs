@@ -15,6 +15,7 @@ namespace WorkrsBackend.DataHandling
         public void UpdateWorkerDHT(WorkerDTO worker);
         public WorkerDTO? GetAvailableWorker();
         public List<WorkerDTO> GetMyWorkers();
+        public WorkerDTO? GetWorkerByJobId(Guid jobId);
         public Dictionary<string, ServerDTO> GetPrimaryServers();
         public void CreateServer(ServerDTO server);
         public ServerDTO? GetServerInfo(string serverName);

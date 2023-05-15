@@ -439,6 +439,23 @@ namespace WorkrsBackend.DataHandling
             }
         }
 
+        public WorkerDTO? GetWorkerByJobId(Guid jobId)
+        {
+            WorkerDTO? worker = null;
+            while (_lockWorker) ;
+            _lockWorkerDHT.EnterReadLock();
+            try
+            {
+                worker = _workersDHT.Where(w => w.Value.JobId == jobId)?.FirstOrDefault().Value;
+            }
+            finally
+            {
+                _lockWorkerDHT.ExitReadLock();
+            }
+
+            return worker;
+        }
+
         public WorkerDTO? GetWorkerById(Guid workerId)
         {
             WorkerDTO? worker = null;

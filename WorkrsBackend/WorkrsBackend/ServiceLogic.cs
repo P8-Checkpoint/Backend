@@ -135,6 +135,7 @@ namespace WorkrsBackend
                 if(!local.ContainsKey(worker.WorkerId) && worker.Status != WorkerStatus.MIA)
                 {
                     worker.Status = WorkerStatus.MIA;
+                    worker.LANIp = "0.0.0.0";
                     _dataAccessHandler.UpdateWorkerDHT(worker);
 
                     var val = _tasks.Where(t => t.Value.Worker?.WorkerId == worker.WorkerId).FirstOrDefault();
@@ -261,10 +262,16 @@ namespace WorkrsBackend
              var val = _dataAccessHandler.GetTasksFromStatus(ServiceTaskStatus.Queued);
             foreach(var job in val)
             {
-                if (DateTime.UtcNow - job.LastActivity < TimeSpan.FromMinutes(3))
+                if (DateTime.UtcNow - job.LastActivity < TimeSpan.FromMinutes(1))
                 {
                     job.Status = ServiceTaskStatus.Created;
+                    var worker = _dataAccessHandler.GetWorkerByJobId(job.Id);
                     _dataAccessHandler.UpdateTask(job);
+                    if(worker != null)
+                    {
+                        worker.Status = WorkerStatus.Available;
+                        _dataAccessHandler.UpdateWorkerDHT(worker);
+                    }    
                 }
             }
         }
@@ -487,6 +494,13 @@ namespace WorkrsBackend
                                     {
                                         WorkerReportDTO report = JsonSerializer.Deserialize<WorkerReportDTO>(message);
                                         Log.Debug($"HandleWorkerRequest_report, Worker: {report.WorkerId}, serviceTask: {report.JobId}");
+                                        
+                                        if(w.LANIp != report.LANIp)
+                                        {
+                                            w.LANIp = report.LANIp;
+                                            _dataAccessHandler.UpdateWorkerDHT(w);
+                                        }    
+
                                         UpdateWorkerKeerpAlive(w);
                                         if (w.JobId != report.JobId && report.JobId != Guid.Empty)
                                         {

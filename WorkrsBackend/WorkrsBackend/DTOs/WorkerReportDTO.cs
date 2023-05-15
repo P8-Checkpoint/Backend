@@ -4,6 +4,7 @@
     {
         public Guid WorkerId { get; set; }
         public Guid JobId { get; set; }
+        public string LANIp { get; set; }
 
         public WorkerReportDTO(Guid workerId, Guid jobId)
         {

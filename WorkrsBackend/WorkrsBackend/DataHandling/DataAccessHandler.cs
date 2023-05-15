@@ -262,9 +262,9 @@ namespace WorkrsBackend.DataHandling
             command.Parameters.AddWithValue("$status", (int)worker.Status);
             command.Parameters.AddWithValue("$serverName", worker.ServerName);
             command.Parameters.AddWithValue("$jobId", worker.JobId);
-            command.Parameters.AddWithValue("$lanIP", worker.JobId);
-            command.Parameters.AddWithValue("$ftpUser", worker.JobId);
-            command.Parameters.AddWithValue("$ftpPassword", worker.JobId);
+            command.Parameters.AddWithValue("$lanIP", worker.LANIp);
+            command.Parameters.AddWithValue("$ftpUser", worker.FTPUser);
+            command.Parameters.AddWithValue("$ftpPassword", worker.FTPPassword);
             command.ExecuteNonQuery();
         }
 

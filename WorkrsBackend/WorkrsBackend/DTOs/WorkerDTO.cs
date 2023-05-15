@@ -21,9 +21,9 @@
 
         public WorkerDTO()
         {
-
+            LANIp = string.Empty;
         }
-        public WorkerDTO(Guid workerId, WorkerStatus status, string serverName)
+        public WorkerDTO(Guid workerId, WorkerStatus status, string serverName) :this()
         {
             WorkerId = workerId;
             Status = status;
