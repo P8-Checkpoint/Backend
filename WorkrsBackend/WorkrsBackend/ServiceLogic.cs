@@ -20,8 +20,8 @@ namespace WorkrsBackend
         Dictionary<Guid, TaskInProgress> _tasks = new();
         Dictionary<Guid, DateTime> _workerKeepAlive = new();
         object _lock = new object();
-        double _mu = 0.001;
-        double _interval = 20;
+        double _mu = 0.000001;
+        double _interval = 30000;
         int _seed = 120;
         Thread _updateThread;
         CancellationToken _CancellationToken;
@@ -262,11 +262,11 @@ namespace WorkrsBackend
              var val = _dataAccessHandler.GetTasksFromStatus(ServiceTaskStatus.Queued);
             foreach(var job in val)
             {
-                if (DateTime.UtcNow - job.LastActivity < TimeSpan.FromMinutes(1))
+                if (DateTime.UtcNow - job.LastActivity > TimeSpan.FromMinutes(2))
                 {
                     job.Status = ServiceTaskStatus.Created;
                     var worker = _dataAccessHandler.GetWorkerByJobId(job.Id);
-                    _dataAccessHandler.UpdateTask(job);
+                    _dataAccessHandler.UpdateWorkerDHT(worker);
                     if(worker != null)
                     {
                         worker.Status = WorkerStatus.Available;
@@ -546,7 +546,7 @@ namespace WorkrsBackend
                                     if (_tasks.TryGetValue(Guid.Parse(message), out tp))
                                     {
                                         var t = _dataAccessHandler.GetTaskFromId(tp.ServiceTask.Id);
-                                        t.Status = ServiceTaskStatus.Canceled;
+                                        t.Status = ServiceTaskStatus.Stopped;
                                         _dataAccessHandler.UpdateTask(t);
                                         _tasks.Remove(t.Id);
                                         Log.Debug($"HandleWorkerRequest_stopJob, task: {t.Id}");
@@ -611,8 +611,12 @@ namespace WorkrsBackend
         {
             if(!_tasks.ContainsKey(job.Id))
             {
-                var worker = _dataAccessHandler.GetAvailableWorker();
+                WorkerDTO worker = _dataAccessHandler.GetWorkerByJobId(job.Id);
+
                 if (worker == null)
+                    worker = _dataAccessHandler.GetAvailableWorker();
+                
+                if(worker == null || worker.Status == WorkerStatus.MIA)
                     return;
 
                 worker.Status = WorkerStatus.Busy;

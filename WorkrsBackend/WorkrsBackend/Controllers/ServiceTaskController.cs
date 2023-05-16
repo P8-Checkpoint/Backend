@@ -105,7 +105,7 @@ namespace WorkrsBackend.Controllers
             {
                 var t = _sharedResourceHandler.GetTaskFromId(taskId);
                 var c = _sharedResourceHandler.FindClientByUserName(_identity.Name);
-                if(c != null && t != null) 
+                if(c != null && t != null && (t.Status != ServiceTaskStatus.Completed && t.Status != ServiceTaskStatus.InProgress)) 
                 {
                     string source = $"{c.ClientId}/{t.Id}/source/";
                     string backup = $"{c.ClientId}/{t.Id}/backup/";
