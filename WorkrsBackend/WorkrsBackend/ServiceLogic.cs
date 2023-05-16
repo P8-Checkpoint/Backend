@@ -507,6 +507,21 @@ namespace WorkrsBackend
                                             Log.Debug($"HandleWorkerRequest_report, {report.WorkerId}, incorrect task!");
                                             StopJob(w.WorkerId, _dataAccessHandler.GetTaskFromId(report.JobId));
                                         }
+                                        else if(w.JobId != Guid.Empty && report.JobId == Guid.Empty) 
+                                        {
+                                            var val = _tasks.Where(t => t.Value?.Worker?.JobId == w.JobId).FirstOrDefault().Value;
+                                            if(val != null)
+                                            {
+                                                if(DateTime.UtcNow - val.ServiceTask.LastActivity > TimeSpan.FromMinutes(1))
+                                                {
+                                                    var t = _dataAccessHandler.GetTaskFromId(val.ServiceTask.Id);
+                                                    t.Status = ServiceTaskStatus.Created;
+                                                    _dataAccessHandler.UpdateTask(t);
+                                                    ResetWorkerAvailable(w);
+                                                    _tasks.Remove(t.Id);
+                                                }
+                                            }
+                                        }
                                     }
                                     catch(Exception ex)
                                     {
