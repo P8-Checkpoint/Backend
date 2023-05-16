@@ -22,5 +22,6 @@ namespace WorkrsBackend.DataHandling
         public ServiceTaskDTO? GetTaskFromId(Guid id);
         public List<ServiceTaskDTO> GetTaskForClient(Guid clientId);
         public List<ServiceTaskDTO> GetTasksFromStatus(ServiceTaskStatus status);
+        public List<LocationDTO> GetLocations();
     }
 }

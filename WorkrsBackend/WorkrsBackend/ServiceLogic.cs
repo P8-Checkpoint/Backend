@@ -77,7 +77,7 @@ namespace WorkrsBackend
                 ClientDTO? c = _dataAccessHandler.FindClientByUserName("test");
                 if (c == null)
                 {
-                    _dataAccessHandler.AddClientToClientDHT(new ClientDTO(Guid.NewGuid(), "test", "test", "P1", "P1", "testFirst", "testLast"));
+                    _dataAccessHandler.AddClientToClientDHT(new ClientDTO(Guid.NewGuid(), "test", "test", "P1", "P1", "Firstname", "Lastname"));
                 }
             }
         }

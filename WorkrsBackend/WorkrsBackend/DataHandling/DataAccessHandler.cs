@@ -53,6 +53,54 @@ namespace WorkrsBackend.DataHandling
             ";
             command.ExecuteNonQuery();
 
+            command.CommandText =
+          @"
+                CREATE TABLE IF NOT EXISTS locations(
+                    id INTEGER PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    latitude DECIMAL(8,6),
+                    longitude DECIMAL(9,6)
+                );
+            ";
+            command.ExecuteNonQuery();
+
+            command.CommandText =
+          @"
+                DELETE FROM locations
+            ";
+            command.ExecuteNonQuery();
+
+            command.CommandText =
+          @"
+                INSERT INTO locations(
+                    name,
+                    latitude,
+                    longitude
+                )
+                VALUES
+                    (
+                        'Trekanten Makerspace',
+                        57.027710,
+                        10.000400
+                    ),
+                    (
+                        'Open Space Aarhus',
+                        56.186200,
+                        10.188390
+                    ),
+                    (
+                        'Teck-Teket Makerspace',
+                        55.729700,
+                        12.359700
+                    ),
+                    (
+                        'Silkeborg Makerspace',
+                        56.166170,
+                        9.546070
+                    );
+            ";
+            command.ExecuteNonQuery();
+
         }
 
         void CreateShardedDatabase()
@@ -431,6 +479,29 @@ namespace WorkrsBackend.DataHandling
                 }
             }
 
+            return retVal;
+        }
+
+        public List<LocationDTO> GetLocations()
+        {
+            List<LocationDTO> retVal = new();
+            var command = localDatabase.CreateCommand();
+            command.CommandText =
+           @"
+                    SELECT *
+                    FROM locations
+                ";
+
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read()) 
+                {
+                    retVal.Add(new LocationDTO(
+                        reader.GetString(1),
+                        reader.GetDecimal(2),
+                        reader.GetDecimal(3)));
+                }
+            }
             return retVal;
         }
 

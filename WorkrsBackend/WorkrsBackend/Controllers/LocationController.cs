@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Principal;
 using WorkrsBackend.DataHandling;
 using WorkrsBackend.DTOs;
 
@@ -13,15 +14,22 @@ namespace WorkrsBackend.Controllers
     public class LocationController : ControllerBase
     {
         ISharedResourceHandler _sharedResourceHandler;
-        public LocationController(ISharedResourceHandler sharedResourceHandler)
+        IIdentity? _identity;
+
+        public LocationController(ISharedResourceHandler sharedResourceHandler, IHttpContextAccessor httpContextAccessor)
         {
             _sharedResourceHandler = sharedResourceHandler;
+            _identity = httpContextAccessor?.HttpContext?.User?.Identity;
         }
 
         [HttpGet]
-        public ActionResult<LocationDTO> GetNearbyWorkers(LocationDTO locationDTO) 
+        public ActionResult<List<LocationDTO>> Locations() 
         {
-            return Ok(new LocationDTO() { Latitude = 0, Longitude = 0 });
+            if (_identity != null)
+            {
+                return Ok(_sharedResourceHandler.GetLocations());
+            }
+            return NotFound();
         }
     }
 }

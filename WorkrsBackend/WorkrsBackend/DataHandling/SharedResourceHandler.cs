@@ -494,6 +494,11 @@ namespace WorkrsBackend.DataHandling
             return _dataAccessHandler.GetTaskForClient(clientId);
         }
 
+        public List<LocationDTO> GetLocations()
+        {
+            return _dataAccessHandler.GetLocations();
+        }
+
         public WorkerDTO? GetAvailableWorker()
         {
             while (_lockWorker) Thread.Sleep(20);

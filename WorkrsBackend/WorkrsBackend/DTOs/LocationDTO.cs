@@ -2,7 +2,15 @@
 {
     public class LocationDTO
     {
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
+        public string Name {  get; set; }
+        public decimal Latitude { get; set; }
+        public decimal Longitude { get; set; }
+
+        public LocationDTO(string name, decimal latitude, decimal longitude)
+        {
+            Name = name;
+            Latitude = latitude;
+            Longitude = longitude;
+        }
     }
 }
